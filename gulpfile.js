@@ -4,6 +4,8 @@ var autoprefixer = require('autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 var rename = require('gulp-rename');
 var cssnano = require('cssnano');
+var stylelint = require('stylelint');
+var reporter = require('postcss-reporter');
 
 gulp.task('styles', function() {
     return gulp.src('src/*.css')
@@ -22,7 +24,23 @@ gulp.task('rename', ['styles'], function() {
         .pipe(gulp.dest("dest/"));
 });
 
-gulp.task('default', ['styles', 'rename']);
+gulp.task("lint-styles", function() {
+    return gulp.src("src/*.css")
+        .pipe(postcss([stylelint({
+                "rules": {
+                    "color-no-invalid-hex": true,
+                    "declaration-colon-space-before": "never",
+                    "indentation": 2,
+                    "number-leading-zero": "always"
+                }
+            }),
+            reporter({
+                clearMessages: true,
+            })
+        ]))
+});
+
+gulp.task('default', ['lint-styles', 'styles', 'rename']);
 
 var watcher = gulp.watch('src/*.css', ['default']);
 
