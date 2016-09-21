@@ -23,3 +23,9 @@ gulp.task('rename', ['styles'], function() {
 });
 
 gulp.task('default', ['styles', 'rename']);
+
+var watcher = gulp.watch('src/*.css', ['default']);
+
+watcher.on('change', function(event) {
+    console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
+});
